@@ -1,0 +1,29 @@
+# secrets and local config
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.crt
+!certs/README.md
+docker/passwd
+
+# runtime data (the SQLite file, its WAL and the smoke-check output)
+data/*.db
+data/*.db-wal
+data/*.db-shm
+data/*.sqlite*
+/tmp/
+
+# python
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+.venv/
+
+# data over 10 MB never belongs here
+*.zip
+*.tar.gz
+*.parquet
