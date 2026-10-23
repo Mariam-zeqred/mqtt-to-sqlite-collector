@@ -3,9 +3,9 @@
 A small Python service that subscribes to the MQTT topics published by
 [esp32-mqtt-sensor-node](https://github.com/Mariam-zeqred/esp32-mqtt-sensor-node), validates every message with
 pydantic, stores it in SQLite (WAL mode), rolls old raw rows up into hourly aggregates, and serves the data over a
-tiny FastAPI read API. A Docker Compose file adds Mosquitto and Grafana with a provisioned dashboard. The whole
-thing is under 600 lines of Python and runs on a Raspberry Pi or a small VPS; no time-series database is needed
-for a farm's worth of nodes.
+tiny FastAPI read API. A Docker Compose file adds Mosquitto and Grafana with a provisioned dashboard. The service
+itself is about 600 lines of Python (765 with comments; tests and tools are extra) and runs on a Raspberry Pi or a
+small VPS; no time-series database is needed for a farm's worth of nodes.
 
 ```
  ESP32 nodes                 broker                    collector (one process)                      readers
