@@ -15,7 +15,7 @@ test:
 smoke:                      ## ingest the real sample without a broker, then the retention table
 	rm -f /tmp/collector-smoke.db*
 	$(PY) -m collector --db /tmp/collector-smoke.db replay data/sample_incubator.jsonl
-	$(PY) -m collector --db /tmp/collector-smoke.db compact
+	RAW_DAYS=7 $(PY) -m collector --db /tmp/collector-smoke.db compact
 	$(PY) -m collector plan
 
 run:                        ## collector + API against the broker in .env

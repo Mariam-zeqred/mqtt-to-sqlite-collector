@@ -1,0 +1,48 @@
+# Mosquitto broker + collector (ingest + API) + Grafana with the SQLite datasource plugin.
+#   cp .env.example .env && edit MQTT_PASSWORD; create docker/passwd (see docker/mosquitto.conf)
+#   docker compose up -d
+#   python tools/publish_fake_node.py --host localhost --user node --password ... --count 60
+#   open http://localhost:8000/nodes and http://localhost:3000 (admin / admin, change it)
+services:
+  mosquitto:
+    image: eclipse-mosquitto:2
+    restart: unless-stopped
+    ports:
+      - "1883:1883"
+    volumes:
+      - ./docker/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
+      - ./docker/passwd:/mosquitto/config/passwd:ro
+      - mosquitto-data:/mosquitto/data
+
+  collector:
+    build: .
+    restart: unless-stopped
+    depends_on: [mosquitto]
+    env_file: .env
+    environment:
+      MQTT_HOST: mosquitto
+      DB_PATH: /data/telemetry.db
+    ports:
+      - "8000:8000"
+    volumes:
+      - telemetry:/data
+
+  grafana:
+    image: grafana/grafana-oss:11.3.0
+    restart: unless-stopped
+    depends_on: [collector]
+    environment:
+      GF_INSTALL_PLUGINS: frser-sqlite-datasource
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:-admin}
+    ports:
+      - "3000:3000"
+    volumes:
+      - telemetry:/data:ro
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./grafana/dashboard.json:/var/lib/grafana/dashboards/collector.json:ro
+      - grafana-data:/var/lib/grafana
+
+volumes:
+  mosquitto-data:
+  telemetry:
+  grafana-data:

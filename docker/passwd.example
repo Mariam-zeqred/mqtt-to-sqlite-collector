@@ -1,0 +1,6 @@
+# Generated with mosquitto_passwd; copy to docker/passwd (which is git-ignored). Example users:
+#   collector   (the collector service, read-only subscriber)
+#   node        (every ESP32 node)
+# This example file contains NO valid hashes.
+collector:$7$101$REPLACE-ME$REPLACE-ME
+node:$7$101$REPLACE-ME$REPLACE-ME

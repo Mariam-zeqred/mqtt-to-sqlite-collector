@@ -1,0 +1,11 @@
+apiVersion: 1
+datasources:
+  - name: telemetry-sqlite
+    uid: telemetry-sqlite
+    type: frser-sqlite-datasource
+    access: proxy
+    isDefault: true
+    jsonData:
+      path: /data/telemetry.db
+      # the collector opens the file in WAL mode; Grafana only reads it
+      pathOptions: "?mode=ro&_journal_mode=WAL"

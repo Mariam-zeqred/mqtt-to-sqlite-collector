@@ -1,0 +1,308 @@
+{
+  "uid": "mqtt-sqlite-collector",
+  "title": "MQTT → SQLite collector",
+  "tags": [
+    "iot",
+    "sqlite",
+    "mqtt"
+  ],
+  "timezone": "browser",
+  "schemaVersion": 39,
+  "version": 1,
+  "editable": true,
+  "refresh": "30s",
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "templating": {
+    "list": [
+      {
+        "name": "node",
+        "label": "Node",
+        "type": "query",
+        "datasource": {
+          "type": "frser-sqlite-datasource",
+          "uid": "telemetry-sqlite"
+        },
+        "query": {
+          "queryText": "SELECT DISTINCT node FROM readings ORDER BY node",
+          "rawQueryText": true
+        },
+        "refresh": 2,
+        "includeAll": false,
+        "multi": false,
+        "sort": 1
+      }
+    ]
+  },
+  "panels": [
+    {
+      "id": 1,
+      "type": "timeseries",
+      "title": "Temperature (raw, °C)",
+      "datasource": {
+        "type": "frser-sqlite-datasource",
+        "uid": "telemetry-sqlite"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 0,
+        "w": 12,
+        "h": 8
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "celsius",
+          "custom": {
+            "spanNulls": 120000
+          }
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "frser-sqlite-datasource",
+            "uid": "telemetry-sqlite"
+          },
+          "refId": "A",
+          "queryType": "table",
+          "rawQueryText": "SELECT received AS time, temp_c FROM readings WHERE node = '${node}' AND received >= $__from / 1000 AND received < $__to / 1000 ORDER BY received",
+          "queryText": "SELECT received AS time, temp_c FROM readings WHERE node = '${node}' AND received >= $__from / 1000 AND received < $__to / 1000 ORDER BY received",
+          "timeColumns": [
+            "time"
+          ]
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "type": "timeseries",
+      "title": "Relative humidity (raw, %)",
+      "datasource": {
+        "type": "frser-sqlite-datasource",
+        "uid": "telemetry-sqlite"
+      },
+      "gridPos": {
+        "x": 12,
+        "y": 0,
+        "w": 12,
+        "h": 8
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "humidity",
+          "custom": {
+            "spanNulls": 120000
+          }
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "frser-sqlite-datasource",
+            "uid": "telemetry-sqlite"
+          },
+          "refId": "A",
+          "queryType": "table",
+          "rawQueryText": "SELECT received AS time, rh_pct FROM readings WHERE node = '${node}' AND received >= $__from / 1000 AND received < $__to / 1000 ORDER BY received",
+          "queryText": "SELECT received AS time, rh_pct FROM readings WHERE node = '${node}' AND received >= $__from / 1000 AND received < $__to / 1000 ORDER BY received",
+          "timeColumns": [
+            "time"
+          ]
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "type": "timeseries",
+      "title": "Hourly temperature min / mean / max (rolled-up history)",
+      "datasource": {
+        "type": "frser-sqlite-datasource",
+        "uid": "telemetry-sqlite"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 8,
+        "w": 12,
+        "h": 8
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "celsius",
+          "custom": {
+            "spanNulls": 120000
+          }
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "frser-sqlite-datasource",
+            "uid": "telemetry-sqlite"
+          },
+          "refId": "A",
+          "queryType": "table",
+          "rawQueryText": "SELECT hour AS time, temp_min, temp_mean, temp_max FROM hourly WHERE node = '${node}' AND hour >= $__from / 1000 AND hour < $__to / 1000 ORDER BY hour",
+          "queryText": "SELECT hour AS time, temp_min, temp_mean, temp_max FROM hourly WHERE node = '${node}' AND hour >= $__from / 1000 AND hour < $__to / 1000 ORDER BY hour",
+          "timeColumns": [
+            "time"
+          ]
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "type": "timeseries",
+      "title": "Wi-Fi RSSI (dBm)",
+      "datasource": {
+        "type": "frser-sqlite-datasource",
+        "uid": "telemetry-sqlite"
+      },
+      "gridPos": {
+        "x": 12,
+        "y": 8,
+        "w": 12,
+        "h": 8
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "dBm",
+          "custom": {
+            "spanNulls": 120000
+          }
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "frser-sqlite-datasource",
+            "uid": "telemetry-sqlite"
+          },
+          "refId": "A",
+          "queryType": "table",
+          "rawQueryText": "SELECT received AS time, rssi_dbm FROM readings WHERE node = '${node}' AND received >= $__from / 1000 AND received < $__to / 1000 ORDER BY received",
+          "queryText": "SELECT received AS time, rssi_dbm FROM readings WHERE node = '${node}' AND received >= $__from / 1000 AND received < $__to / 1000 ORDER BY received",
+          "timeColumns": [
+            "time"
+          ]
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "type": "table",
+      "title": "Nodes",
+      "datasource": {
+        "type": "frser-sqlite-datasource",
+        "uid": "telemetry-sqlite"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 16,
+        "w": 12,
+        "h": 7
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "frser-sqlite-datasource",
+            "uid": "telemetry-sqlite"
+          },
+          "refId": "A",
+          "queryType": "table",
+          "rawQueryText": "SELECT node, COUNT(*) AS readings, datetime(MAX(received), 'unixepoch') AS last_seen, (SELECT state FROM status s WHERE s.node = r.node ORDER BY received DESC LIMIT 1) AS state FROM readings r GROUP BY node ORDER BY node",
+          "queryText": "SELECT node, COUNT(*) AS readings, datetime(MAX(received), 'unixepoch') AS last_seen, (SELECT state FROM status s WHERE s.node = r.node ORDER BY received DESC LIMIT 1) AS state FROM readings r GROUP BY node ORDER BY node",
+          "timeColumns": []
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "type": "stat",
+      "title": "Rejected messages in the selected range",
+      "datasource": {
+        "type": "frser-sqlite-datasource",
+        "uid": "telemetry-sqlite"
+      },
+      "gridPos": {
+        "x": 12,
+        "y": 16,
+        "w": 6,
+        "h": 7
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 1
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "frser-sqlite-datasource",
+            "uid": "telemetry-sqlite"
+          },
+          "refId": "A",
+          "queryType": "table",
+          "rawQueryText": "SELECT COUNT(*) AS rejected FROM rejected WHERE received >= $__from / 1000 AND received < $__to / 1000",
+          "queryText": "SELECT COUNT(*) AS rejected FROM rejected WHERE received >= $__from / 1000 AND received < $__to / 1000",
+          "timeColumns": []
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "type": "stat",
+      "title": "Database size",
+      "datasource": {
+        "type": "frser-sqlite-datasource",
+        "uid": "telemetry-sqlite"
+      },
+      "gridPos": {
+        "x": 18,
+        "y": 16,
+        "w": 6,
+        "h": 7
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bytes"
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "frser-sqlite-datasource",
+            "uid": "telemetry-sqlite"
+          },
+          "refId": "A",
+          "queryType": "table",
+          "rawQueryText": "SELECT page_count * page_size AS db_bytes FROM pragma_page_count, pragma_page_size",
+          "queryText": "SELECT page_count * page_size AS db_bytes FROM pragma_page_count, pragma_page_size",
+          "timeColumns": []
+        }
+      ]
+    }
+  ]
+}
