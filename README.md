@@ -82,7 +82,7 @@ GET /nodes/x/readings?limit=0     -> 422 (limit must be 1..10000)
 
 **The sample data is real.** `data/sample_incubator.jsonl` is the 3 October 2026 history of Mariam's queen-bee
 incubator (`hive-1C5A00`, 1 367 readings at 15 s) copied from
-[incubator-telemetry-analysis](https://github.com/Mariam-zeqred/incubator-telemetry-analysis) and rewritten into
+the `incubator-telemetry-analysis` repository (private since 2026-11-21) and rewritten into
 the node's topic/JSON format by `tools/make_sample.py`. Only the logged fields are present (`ts`, `temp_c`,
 `rh_pct`, `seq` = index); `rssi_dbm`, `uptime_s` and `fw` were not logged by that device and are left `null`
 rather than invented. `tools/publish_fake_node.py` without `--replay` produces clearly labelled synthetic values.
